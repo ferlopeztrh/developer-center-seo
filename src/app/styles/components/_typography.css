@@ -1,0 +1,9 @@
+@layer base {
+  .font-gilroy {
+    font-family: var(--font-gilroy);
+  }
+
+  .font-notosans {
+    font-family: var(--font-notosans);
+  }
+}

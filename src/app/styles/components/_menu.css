@@ -1,0 +1,33 @@
+.menu-line {
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+  will-change: transform;
+}
+
+/* Landscape mobile adjustments */
+@media screen and (max-height: 500px) and (orientation: landscape) {
+  .menu-overlay-content {
+    flex-direction: column !important;
+  }
+
+  .menu-content-wrapper {
+    width: 100% !important;
+  }
+
+  .menu-content-main {
+    flex-direction: row !important;
+    gap: 2rem !important;
+    top: 45% !important;
+    width: 85% !important;
+  }
+
+  .menu-link a {
+    font-size: 1.5rem !important;
+  }
+
+  .menu-footer {
+    flex-direction: row !important;
+    gap: 1.5rem !important;
+  }
+}

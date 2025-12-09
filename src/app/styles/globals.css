@@ -1,0 +1,79 @@
+@import "tailwindcss";
+
+@import "./animations/_index.css";
+@import "./components/_index.css";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+
+  --color-primary: #753bbd;
+  --color-primary-100: #e3d8f2;
+  --color-primary-200: #c8b1e5;
+  --color-primary-300: #ac89d7;
+  --color-primary-400: #9162ca;
+  --color-primary-500: #582c8e;
+  --color-primary-foreground: #f8e1ff;
+
+  --color-secondary: #ce0058;
+  --color-secondary-100: #f5ccde;
+  --color-secondary-200: #eb99bc;
+  --color-secondary-300: #e2669b;
+  --color-secondary-400: #d83379;
+  --color-secondary-500: #9b0042;
+  --color-secondary-foreground: #352bc0;
+
+  --color-label: #595555;
+
+  --font-gilroy: "Gilroy", sans-serif;
+  --font-notosans: "NotoSans", sans-serif;
+
+  /* Easing functions reutilizables */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-quad: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-primary: #753bbd;
+  --color-primary-100: #e3d8f2;
+  --color-primary-200: #c8b1e5;
+  --color-primary-300: #ac89d7;
+  --color-primary-400: #9162ca;
+  --color-primary-500: #582c8e;
+  --color-primary-foreground: #f8e1ff;
+
+  --color-secondary: #ce0058;
+  --color-secondary-100: #f5ccde;
+  --color-secondary-200: #eb99bc;
+  --color-secondary-300: #e2669b;
+  --color-secondary-400: #d83379;
+  --color-secondary-500: #9b0042;
+  --color-secondary-foreground: #352bc0;
+
+  --color-label: #595555;
+
+  --font-gilroy: "Gilroy", sans-serif;
+  --font-notosans: "NotoSans", sans-serif;
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+select option:hover {
+  background-color: var(--color-primary);
+  color: white;
+}
+
+/* Base global */
+body {
+  background: var(--background);
+  color: var(--foreground);
+  overflow-x: hidden;
+}
+
+::selection {
+  background-color: var(--color-primary);
+  color: white;
+}
