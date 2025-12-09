@@ -5,6 +5,10 @@ export const menu = {
   cardRegistry: "Catastro de tarjetas",
   recurringPayments: "Pagos recurrentes",
   portal: "Portal Dinelco",
+
+  a11y: {
+    motionLabel: "Reducir movimiento",
+  },
 };
 
 export type MenuDictionary = typeof menu;

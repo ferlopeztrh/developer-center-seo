@@ -3,6 +3,7 @@ export const common = {
   products: "Productos",
   resources: "Recursos",
   news: "Novedades",
+  mainNavigation: "Navegación principal",
 };
 
 export type CommonDictionary = typeof common;

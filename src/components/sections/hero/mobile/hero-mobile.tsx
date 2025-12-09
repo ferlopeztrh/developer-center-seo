@@ -1,6 +1,7 @@
-// hero-mobile.tsx
 import Image from "next/image";
+import Link from "next/link";
 import { AnimatedProgress } from "@/components/ui/animated-progress";
+import { useLocale } from "@/hooks/use-locale";
 
 import heroImage from "@/assets/images/individual-mobile.webp";
 import clickToPay from "@/assets/brands/click-to-pay.svg";
@@ -10,7 +11,6 @@ import mastercard from "@/assets/brands/mastercard.svg";
 import visa from "@/assets/brands/visa.svg";
 import dinelco35 from "@/assets/dinelco-35.svg";
 
-// Merchants - igual que desktop
 import contimarket from "@/assets/merchants/contimarket.png";
 import nissei from "@/assets/merchants/nissei.png";
 import cocaCola from "@/assets/merchants/coca-cola.png";
@@ -22,35 +22,35 @@ import {
   BottomGridMobileSVG,
 } from "@/components/sections/hero/svg";
 
-// Logos de marcas de pago
-const BRAND_LOGOS = [
-  { name: "Mastercard", src: mastercard },
-  { name: "Visa", src: visa },
-  { name: "GPay", src: gpay },
-  { name: "Apple Pay", src: applePay },
-  { name: "Click to Pay", src: clickToPay },
-];
-
-// Logos de merchants - igual que desktop
 const MERCHANTS_LOGOS = [
-  { name: "Contimarket", src: contimarket, maxHeight: 28 },
-  { name: "Nissei", src: nissei, maxHeight: 32 },
-  { name: "Coca Cola", src: cocaCola, maxHeight: 22 },
-  { name: "d - Local", src: dLocal, maxHeight: 18 },
-  { name: "Superseis", src: superSeis, maxHeight: 24 },
-];
+  { key: "contimarket", src: contimarket, maxHeight: 28 },
+  { key: "nissei", src: nissei, maxHeight: 32 },
+  { key: "cocaCola", src: cocaCola, maxHeight: 22 },
+  { key: "dLocal", src: dLocal, maxHeight: 18 },
+  { key: "superSeis", src: superSeis, maxHeight: 24 },
+] as const;
 
 export function HeroMobile() {
+  const { t } = useLocale();
+  const heroTexts = t.sections.hero;
+  const { stats, floatingCards, images, a11y } = heroTexts;
+
   return (
-    <section className="md:hidden relative min-h-dvh overflow-hidden bg-[#f8f7fc]">
-      {/* Background SVG Clip Path */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+    <section
+      className="md:hidden relative min-h-dvh overflow-hidden bg-[#f8f7fc]"
+      aria-labelledby="hero-heading-mobile"
+    >
+      {/* Background SVG decorativo */}
+      <div
+        className="absolute inset-0 pointer-events-none overflow-hidden"
+        aria-hidden="true"
+      >
         <svg
           className="absolute bottom-0 left-0 w-full"
           viewBox="0 0 1440 400"
           preserveAspectRatio="none"
           style={{ height: "40%" }}
-          aria-hidden="true"
+          focusable="false"
         >
           <path
             fill="white"
@@ -59,19 +59,22 @@ export function HeroMobile() {
         </svg>
       </div>
 
-      {/* Wrapper principal */}
+      {/* Contenido principal */}
       <div className="relative max-w-[1440px] mx-auto px-5 sm:px-6 z-10">
-        {/* Head - Contenido */}
-        <div className="relative md:pt-24 pt-12 pb-6">
-          <div className="relative flex flex-col justify-center items-center">
-            <h1 className="reveal-text font-gilroy text-[32px] sm:text-4xl text-primary leading-[1.1]">
-              <span>Hacelo diferente con</span>
+        <article className="relative md:pt-24 pt-12 pb-6">
+          <header className="relative flex flex-col justify-center items-center">
+            <h1
+              id="hero-heading-mobile"
+              className="reveal-text font-gilroy text-[32px] sm:text-4xl text-primary leading-[1.1]"
+            >
+              {heroTexts.title}
+              <span className="sr-only"> Dinelco</span>
             </h1>
 
             <div className="slide-up delay-200">
               <Image
                 src={dinelco35}
-                alt="Dinelco - 35 años procesando pagos en Paraguay"
+                alt={images.heroLogoAlt}
                 width={260}
                 height={90}
                 className="my-6 sm:my-8"
@@ -79,36 +82,39 @@ export function HeroMobile() {
               />
             </div>
 
-            {/* Texto completo - igual que desktop */}
             <p className="slide-up delay-300 font-notosans text-[15px] sm:text-base text-label max-w-sm leading-relaxed text-center">
-              Hacer las cosas diferente es estar un paso adelante. Es entender
-              que para mejorar hay que cambiar. Es elegir de verdad. Es no
-              conformarte y buscar algo mejor a lo que tenés.
+              {heroTexts.subtitle}
             </p>
 
             {/* CTAs */}
-            <div className="slide-up delay-400 mt-6 flex flex-wrap gap-3">
-              <a
+            <nav
+              className="slide-up delay-400 mt-6 flex flex-wrap gap-3"
+              aria-label={a11y.ctaNavLabel}
+            >
+              <Link
                 href="/contacto"
-                className="inline-flex items-center justify-center px-5 py-2.5 rounded-[10px] font-gilroy font-medium text-[15px] bg-primary text-white hover:bg-primary-400 transition-colors"
+                className="inline-flex items-center justify-center px-5 py-2.5 rounded-[10px] font-gilroy font-medium text-[15px] bg-primary text-white hover:bg-primary-400 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
               >
-                Contactanos
-              </a>
-              <a
+                {heroTexts.ctaPrimary}
+              </Link>
+              <Link
                 href="/soluciones"
-                className="inline-flex items-center justify-center px-5 py-2.5 rounded-[10px] font-gilroy font-medium text-[15px] border-2 border-primary text-primary hover:border-primary-400 transition-colors"
+                className="inline-flex items-center justify-center px-5 py-2.5 rounded-[10px] font-gilroy font-medium text-[15px] border-2 border-primary text-primary hover:border-primary-400 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
               >
-                Conocé más
-              </a>
-            </div>
-          </div>
-        </div>
+                {heroTexts.ctaSecondary}
+              </Link>
+            </nav>
+          </header>
+        </article>
 
-        {/* Hero Image Mobile con SVGs y Cards */}
-        <div className="relative py-4">
+        {/* Hero Image con Cards flotantes */}
+        <figure className="relative py-4">
           <div className="relative max-w-[320px] sm:max-w-sm mx-auto">
             {/* SVG Grid decorativo - Top */}
-            <div className="absolute -top-8 -left-8 -right-8 z-0 opacity-60">
+            <div
+              className="absolute -top-8 -left-8 -right-8 z-0 opacity-60"
+              aria-hidden="true"
+            >
               <TopGridMobileSVG />
             </div>
 
@@ -116,27 +122,38 @@ export function HeroMobile() {
             <div className="hero-image-container relative z-10 hero-image-reveal">
               <Image
                 src={heroImage}
-                alt="Usuario realizando pago móvil con Dinelco"
+                alt={a11y.heroImageAlt}
                 className="w-full h-auto"
                 priority
+                sizes="(max-width: 640px) 320px, 384px"
               />
             </div>
 
             {/* SVG Grid decorativo - Bottom */}
-            <div className="absolute -bottom-12 -left-8 -right-8 z-0 opacity-60">
+            <div
+              className="absolute -bottom-12 -left-8 -right-8 z-0 opacity-60"
+              aria-hidden="true"
+            >
               <BottomGridMobileSVG />
             </div>
 
             {/* Card flotante - Stats */}
-            <div className="float-card float-card-left delay-card-1 absolute -left-3 top-[18%] bg-white rounded-xl shadow-lg p-2.5 sm:p-3 min-w-[115px] sm:min-w-[130px] z-20">
+            <div
+              className="float-card float-card-left delay-card-1 absolute -left-3 top-[18%] bg-white rounded-xl shadow-lg p-2.5 sm:p-3 min-w-[115px] sm:min-w-[130px] z-20"
+              role="presentation"
+            >
               <div className="flex items-center gap-2">
-                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                <div
+                  className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0"
+                  aria-hidden="true"
+                >
                   <svg
                     className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
                     aria-hidden="true"
+                    focusable="false"
                   >
                     <path
                       strokeLinecap="round"
@@ -148,65 +165,79 @@ export function HeroMobile() {
                 </div>
                 <div>
                   <p className="font-notosans text-[9px] sm:text-[10px] text-label">
-                    Movimientos/mes
+                    {stats.monthlyMovementsLabel}
                   </p>
                   <p className="font-gilroy text-sm sm:text-base font-bold text-primary">
-                    +2.5M
+                    {stats.monthlyMovements}
                   </p>
                 </div>
               </div>
             </div>
 
-            {/* Card flotante - Metodos de pago */}
-            <div className="float-card float-card-right delay-card-2 absolute -right-2 top-[8%] bg-white rounded-xl shadow-lg p-2.5 sm:p-3 z-20">
+            {/* Card flotante - Métodos de pago */}
+            <div
+              className="float-card float-card-right delay-card-2 absolute -right-2 top-[8%] bg-white rounded-xl shadow-lg p-2.5 sm:p-3 z-20"
+              role="presentation"
+            >
               <div className="flex items-center gap-0.5">
                 <Image
                   src={mastercard}
-                  alt="Mastercard"
+                  alt={images.paymentBrands.mastercard}
                   className="h-4 sm:h-5 w-auto"
                   height={20}
+                  width={32}
                 />
                 <Image
                   src={visa}
-                  alt="Visa"
+                  alt={images.paymentBrands.visa}
                   className="h-4 sm:h-5 w-auto"
                   height={20}
+                  width={32}
                 />
               </div>
               <p className="font-notosans text-[9px] sm:text-[10px] text-label mt-1">
-                Crédito y Débito
+                {floatingCards.creditDebit}
               </p>
             </div>
 
             {/* Card flotante - Wallets */}
-            <div className="float-card float-card-right delay-card-3 absolute -right-3 bottom-[28%] bg-white rounded-xl shadow-lg p-2.5 sm:p-3 z-20">
+            <div
+              className="float-card float-card-right delay-card-3 absolute -right-3 bottom-[28%] bg-white rounded-xl shadow-lg p-2.5 sm:p-3 z-20"
+              role="presentation"
+            >
               <div className="flex items-center gap-1.5">
                 <Image
                   src={gpay}
-                  alt="Google Pay"
+                  alt={images.paymentBrands.googlePay}
                   className="h-4 sm:h-5 w-auto"
                   height={20}
+                  width={32}
                 />
                 <Image
                   src={applePay}
-                  alt="Apple Pay"
+                  alt={images.paymentBrands.applePay}
                   className="h-4 sm:h-5 w-auto"
                   height={20}
+                  width={32}
                 />
                 <Image
                   src={clickToPay}
-                  alt="Click To Pay"
+                  alt={images.paymentBrands.clickToPay}
                   className="h-4 sm:h-5 w-auto"
                   height={20}
+                  width={32}
                 />
               </div>
               <p className="font-notosans text-[9px] sm:text-[10px] text-label mt-1">
-                Pagos sin fricción
+                {floatingCards.frictionlessPayments}
               </p>
             </div>
 
             {/* Card flotante - Tasa de aceptación */}
-            <div className="float-card float-card-left delay-card-4 absolute -left-2 bottom-[12%] bg-white rounded-xl shadow-lg p-2.5 sm:p-3 z-20">
+            <div
+              className="float-card float-card-left delay-card-4 absolute -left-2 bottom-[12%] bg-white rounded-xl shadow-lg p-2.5 sm:p-3 z-20"
+              role="presentation"
+            >
               <div className="flex items-center gap-2">
                 <AnimatedProgress
                   id="hero-mobile"
@@ -216,45 +247,60 @@ export function HeroMobile() {
                 />
                 <div>
                   <p className="font-notosans text-[9px] sm:text-[10px] text-label">
-                    Tasa de
+                    {stats.acceptanceRateLabel}
                   </p>
                   <p className="font-gilroy text-[11px] sm:text-xs font-semibold text-primary">
-                    Aceptación
+                    {stats.acceptanceRateValue}
                   </p>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        </figure>
 
-        {/* Merchants logos - igual que desktop */}
-        <div className="slide-up delay-500 relative py-6 overflow-hidden">
-          <p className="font-gilroy font-medium text-base text-label mb-3 text-center">
-            +<span className="font-bold text-primary">335.956</span> comercios
-            que confían en nosotros.
+        {/* Merchants logos */}
+        <aside
+          className="slide-up delay-500 relative py-6 overflow-hidden"
+          aria-labelledby="merchants-heading-mobile"
+        >
+          <p
+            id="merchants-heading-mobile"
+            className="font-gilroy font-medium text-base text-label mb-3 text-center"
+          >
+            +<span className="font-bold text-primary">{stats.commerces}</span>{" "}
+            {stats.commercesText}
           </p>
 
-          <div className="flex flex-wrap items-center justify-center gap-6 py-2">
-            {MERCHANTS_LOGOS.map((logo, index) => (
-              <div
-                key={logo.name}
-                className="flex items-center justify-center fade-in"
-                style={{
-                  height: `${logo.maxHeight}px`,
-                  animationDelay: `${0.6 + index * 0.1}s`,
-                }}
-              >
-                <Image
-                  src={logo.src}
-                  alt={`Logo de ${logo.name}`}
-                  className="object-contain w-auto grayscale opacity-60"
-                  style={{ height: `${logo.maxHeight}px` }}
-                  priority
-                />
-              </div>
-            ))}
-          </div>
-        </div>
+          <ul
+            className="flex flex-wrap items-center justify-center gap-6 py-2"
+            role="list"
+            aria-label={a11y.merchantsListLabel}
+          >
+            {MERCHANTS_LOGOS.map((logo, index) => {
+              const merchantData = images.merchants[index];
+              return (
+                <li
+                  key={logo.key}
+                  className="flex items-center justify-center fade-in"
+                  style={{
+                    height: `${logo.maxHeight}px`,
+                    animationDelay: `${0.6 + index * 0.1}s`,
+                  }}
+                >
+                  <Image
+                    src={logo.src}
+                    alt={merchantData?.alt ?? `Logo de ${logo.key}`}
+                    className="object-contain w-auto grayscale opacity-60"
+                    style={{ height: `${logo.maxHeight}px` }}
+                    width={80}
+                    height={logo.maxHeight}
+                    loading="eager"
+                  />
+                </li>
+              );
+            })}
+          </ul>
+        </aside>
       </div>
     </section>
   );

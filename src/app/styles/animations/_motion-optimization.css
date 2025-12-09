@@ -1,0 +1,33 @@
+/* globals.css */
+
+/* Forzar compositing en elementos animados */
+.hero-text-content,
+.merchant-logos,
+.hero-image-container,
+.float-card,
+.grid-image,
+.grid-image-element,
+.grid-title-line {
+  will-change: transform, opacity;
+  transform: translateZ(0);
+}
+
+/* Pero remover will-change cuando no está en viewport */
+@media (prefers-reduced-motion: no-preference) {
+  .hero-section-static .hero-text-content,
+  .hero-section-static .merchant-logos,
+  .hero-section-static .hero-image-container,
+  .hero-section-static .float-card {
+    will-change: auto;
+  }
+}
+
+/* Optimizar imágenes */
+.grid-image {
+  contain: layout style paint;
+}
+
+.grid-image-element {
+  content-visibility: auto;
+  contain-intrinsic-size: 150px 150px;
+}
