@@ -13,6 +13,7 @@ import { ArrowIcon, ChevronIcon } from "@/components/icons";
 import { SolutionCard } from "@/sections/products/components/solution-card";
 
 import { SOLUTIONS } from "@/sections/products/constants";
+import { PortalCard } from "./portal-card";
 
 export function ProductsSection() {
   useAnimateOnView();
@@ -158,6 +159,7 @@ export function ProductsSection() {
           </div>
         </>
       )}
+      <PortalCard />
     </section>
   );
 }
