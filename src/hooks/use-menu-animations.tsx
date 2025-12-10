@@ -4,6 +4,7 @@ import { useRef, useCallback } from "react";
 import gsap from "gsap";
 import { SplitText } from "gsap/SplitText";
 import { CustomEase } from "gsap/CustomEase";
+import { useMotion } from "@/providers/motion-provider";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(CustomEase, SplitText);
@@ -20,28 +21,53 @@ interface MenuRefs {
 export function useMenuAnimation(
   lenis: { stop: () => void; start: () => void } | null
 ) {
+  const { shouldReduceMotion } = useMotion();
   const timelineRef = useRef<gsap.core.Timeline | null>(null);
   const splitInstancesRef = useRef<SplitText[][]>([]);
   const wrappersRef = useRef<HTMLDivElement[]>([]);
+  const isCleaningUpRef = useRef(false);
+
+  // Duraciones según preferencia
+  const duration = shouldReduceMotion ? 0.2 : 1;
+  const staggerDuration = shouldReduceMotion ? 0.3 : 2;
+  const staggerAmount = shouldReduceMotion ? 0.02 : 0.075;
 
   const cleanup = useCallback(() => {
-    splitInstancesRef.current.forEach((containerSplits) => {
-      containerSplits.forEach((split) => split.revert());
-    });
-    wrappersRef.current.forEach((wrapper) => {
-      if (wrapper.parentNode) {
-        const line = wrapper.firstChild;
-        if (line) wrapper.parentNode.insertBefore(line, wrapper);
-        wrapper.remove();
-      }
-    });
-    splitInstancesRef.current = [];
-    wrappersRef.current = [];
+    // Evitar cleanup múltiple o durante reload
+    if (isCleaningUpRef.current) return;
+    isCleaningUpRef.current = true;
+
+    try {
+      splitInstancesRef.current.forEach((containerSplits) => {
+        containerSplits.forEach((split) => {
+          try {
+            split.revert();
+          } catch {
+            // Ignorar errores si el DOM ya no existe
+          }
+        });
+      });
+
+      wrappersRef.current.forEach((wrapper) => {
+        try {
+          if (wrapper.parentNode && wrapper.firstChild) {
+            const line = wrapper.firstChild;
+            wrapper.parentNode.insertBefore(line, wrapper);
+            wrapper.remove();
+          }
+        } catch {
+          // Ignorar errores si el DOM ya no existe
+        }
+      });
+    } finally {
+      splitInstancesRef.current = [];
+      wrappersRef.current = [];
+      isCleaningUpRef.current = false;
+    }
   }, []);
 
   const initSplitText = useCallback(
     (menuCols: HTMLElement[]) => {
-      // Limpiar instancias previas
       cleanup();
 
       menuCols.forEach((container) => {
@@ -68,13 +94,13 @@ export function useMenuAnimation(
           });
 
           containerSplits.push(split);
-          gsap.set(split.lines, { yPercent: -110 });
+          gsap.set(split.lines, { yPercent: shouldReduceMotion ? -100 : -110 });
         });
 
         splitInstancesRef.current.push(containerSplits);
       });
     },
-    [cleanup]
+    [cleanup, shouldReduceMotion]
   );
 
   const openMenu = useCallback(
@@ -84,29 +110,57 @@ export function useMenuAnimation(
 
       timelineRef.current = gsap.timeline();
 
-      timelineRef.current
-        .to(refs.overlay, {
-          clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)",
-          duration: 1,
-          ease: "hop",
-        })
-        .to(refs.overlayContent, { yPercent: 0, duration: 1, ease: "hop" }, "<")
-        .to(
-          refs.mediaWrapper,
-          { opacity: 1, duration: 0.75, ease: "power2.out", delay: 0.5 },
-          "<"
-        );
+      if (shouldReduceMotion) {
+        timelineRef.current
+          .to(refs.overlay, {
+            clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)",
+            duration: duration,
+            ease: "power2.out",
+          })
+          .to(
+            refs.overlayContent,
+            { yPercent: 0, duration: duration, ease: "power2.out" },
+            "<"
+          )
+          .to(
+            refs.mediaWrapper,
+            { opacity: 1, duration: duration, ease: "power2.out" },
+            "<"
+          );
+      } else {
+        timelineRef.current
+          .to(refs.overlay, {
+            clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)",
+            duration: duration,
+            ease: "hop",
+          })
+          .to(
+            refs.overlayContent,
+            { yPercent: 0, duration: duration, ease: "hop" },
+            "<"
+          )
+          .to(
+            refs.mediaWrapper,
+            { opacity: 1, duration: 0.75, ease: "power2.out", delay: 0.5 },
+            "<"
+          );
+      }
 
       splitInstancesRef.current.forEach((containerSplits) => {
         const lines = containerSplits.flatMap((s) => s.lines);
         timelineRef.current?.to(
           lines,
-          { yPercent: 0, duration: 2, ease: "hop", stagger: -0.075 },
-          "<-0.15"
+          {
+            yPercent: 0,
+            duration: staggerDuration,
+            ease: shouldReduceMotion ? "power2.out" : "hop",
+            stagger: -staggerAmount,
+          },
+          shouldReduceMotion ? "<" : "<-0.15"
         );
       });
     },
-    [lenis]
+    [lenis, shouldReduceMotion, duration, staggerDuration, staggerAmount]
   );
 
   const closeMenu = useCallback(
@@ -115,29 +169,53 @@ export function useMenuAnimation(
 
       timelineRef.current = gsap.timeline({
         onComplete: () => {
-          splitInstancesRef.current.forEach((containerSplits) => {
-            const lines = containerSplits.flatMap((s) => s.lines);
-            gsap.set(lines, { yPercent: -110 });
-          });
-          refs.menuCols.forEach((col) => col && gsap.set(col, { opacity: 1 }));
-          gsap.set(refs.mediaWrapper, { opacity: 0 });
+          try {
+            splitInstancesRef.current.forEach((containerSplits) => {
+              const lines = containerSplits.flatMap((s) => s.lines);
+              gsap.set(lines, { yPercent: shouldReduceMotion ? -100 : -110 });
+            });
+            refs.menuCols.forEach(
+              (col) => col && gsap.set(col, { opacity: 1 })
+            );
+            gsap.set(refs.mediaWrapper, { opacity: 0 });
+          } catch {
+            // Ignorar si el DOM ya no existe
+          }
           lenis?.start();
         },
       });
 
-      timelineRef.current
-        .to(refs.menuCols, { opacity: 0.25, duration: 1, ease: "hop" })
-        .to(
-          refs.overlay,
-          {
-            clipPath: "polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%)",
-            duration: 1,
-            ease: "hop",
-          },
-          "<"
-        );
+      if (shouldReduceMotion) {
+        timelineRef.current
+          .to(refs.menuCols, {
+            opacity: 0,
+            duration: duration,
+            ease: "power2.out",
+          })
+          .to(
+            refs.overlay,
+            {
+              clipPath: "polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%)",
+              duration: duration,
+              ease: "power2.out",
+            },
+            "<"
+          );
+      } else {
+        timelineRef.current
+          .to(refs.menuCols, { opacity: 0.25, duration: duration, ease: "hop" })
+          .to(
+            refs.overlay,
+            {
+              clipPath: "polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%)",
+              duration: duration,
+              ease: "hop",
+            },
+            "<"
+          );
+      }
     },
-    [lenis]
+    [lenis, shouldReduceMotion, duration]
   );
 
   return { initSplitText, cleanup, openMenu, closeMenu };

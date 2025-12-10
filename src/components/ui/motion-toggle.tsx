@@ -24,16 +24,23 @@ export function MotionToggle() {
         aria-checked={shouldReduceMotion}
         aria-label={a11yTexts.motionLabel}
         onClick={handleToggle}
+        disabled={false}
         className={`
-          relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200
+          relative inline-flex h-6 w-11 items-center rounded-full 
           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-black
           ${shouldReduceMotion ? "bg-primary" : "bg-neutral-700"}
+          ${shouldReduceMotion ? "" : "transition-colors duration-200"}
         `}
       >
         <span
           className={`
-            inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200
+            inline-block h-4 w-4 rounded-full bg-white
             ${shouldReduceMotion ? "translate-x-6" : "translate-x-1"}
+            ${
+              shouldReduceMotion
+                ? ""
+                : "transform transition-transform duration-200"
+            }
           `}
         />
       </button>

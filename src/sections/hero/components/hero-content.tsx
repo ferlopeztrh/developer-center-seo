@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { HeroImageSection } from "./hero-image-section";
+import { HeroImageSection } from "@/sections/hero/components";
 import { useLocale } from "@/hooks/use-locale";
 
 import dinelco35 from "@/assets/dinelco-35.svg";

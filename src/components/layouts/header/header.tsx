@@ -1,13 +1,15 @@
-// header.tsx
 "use client";
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useLenis } from "@/providers/lenis-provider";
-import { HamburgerButton } from "./hamburguer-button";
-import { MenuOverlay, MenuOverlayRef } from "./menu-overlay";
-import { useMenuAnimation } from "@/hooks/use-menu-animations";
+import { useLenis } from "@/providers";
+import { useMenuAnimation } from "@/hooks";
+import {
+  MenuOverlay,
+  MenuOverlayRef,
+  HamburgerButton,
+} from "@/components/layouts/header";
 
 import dinelcoLogo from "@/assets/isologo-white.svg";
 

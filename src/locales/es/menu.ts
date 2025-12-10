@@ -7,6 +7,7 @@ export const menu = {
   portal: "Portal Dinelco",
 
   a11y: {
+    title: "Menú de navegación",
     motionLabel: "Reducir movimiento",
   },
 };

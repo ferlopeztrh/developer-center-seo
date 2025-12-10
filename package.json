@@ -6,6 +6,7 @@
     "dev": "next dev",
     "build": "next build && node scripts/generate-base-path.mjs",
     "start": "next start",
+    "start:build": "npx serve@latest -s out/developer-center",
     "lint": "eslint"
   },
   "dependencies": {

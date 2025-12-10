@@ -4,7 +4,7 @@ import { HeroContent } from "./hero-content";
 import { HeroMobile } from "./mobile/hero-mobile";
 import { CommercesGrid } from "./commerce-grid";
 import { GridMobileSection } from "./mobile/grid-mobile-section";
-import { useHeroAnimation } from "./use-hero-animations";
+import { useHeroAnimation } from "../hooks/use-hero-animations";
 import { useMotion } from "@/providers";
 
 export function HeroSection() {

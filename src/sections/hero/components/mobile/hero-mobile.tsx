@@ -20,7 +20,7 @@ import superSeis from "@/assets/merchants/superseis.svg";
 import {
   TopGridMobileSVG,
   BottomGridMobileSVG,
-} from "@/components/sections/hero/svg";
+} from "@/sections/hero/components/svg";
 
 const MERCHANTS_LOGOS = [
   { key: "contimarket", src: contimarket, maxHeight: 28 },
@@ -78,6 +78,7 @@ export function HeroMobile() {
                 width={260}
                 height={90}
                 className="my-6 sm:my-8"
+                sizes="(max-width: 640px) 320px, 384px"
                 priority
               />
             </div>

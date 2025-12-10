@@ -9,6 +9,7 @@ import {
   useCallback,
 } from "react";
 import Lenis from "lenis";
+import { useMotion } from "./motion-provider";
 
 interface LenisContextType {
   lenis: Lenis | null;
@@ -25,7 +26,9 @@ export function SmoothScrollProvider({
 }: {
   children: React.ReactNode;
 }) {
+  const { shouldReduceMotion } = useMotion();
   const lenisRef = useRef<Lenis | null>(null);
+  const rafIdRef = useRef<number | null>(null);
   const subscribersRef = useRef(new Set<() => void>());
 
   const subscribe = useCallback((callback: () => void) => {
@@ -41,6 +44,13 @@ export function SmoothScrollProvider({
   const lenis = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
   useEffect(() => {
+    // Si debe reducir motion, no inicializar Lenis
+    if (shouldReduceMotion) {
+      // Asegurar scroll nativo desde el inicio
+      window.scrollTo(0, 0);
+      return;
+    }
+
     const subscribers = subscribersRef.current;
 
     const lenisInstance = new Lenis({
@@ -55,17 +65,20 @@ export function SmoothScrollProvider({
 
     function raf(time: number) {
       lenisInstance.raf(time);
-      requestAnimationFrame(raf);
+      rafIdRef.current = requestAnimationFrame(raf);
     }
 
-    requestAnimationFrame(raf);
+    rafIdRef.current = requestAnimationFrame(raf);
 
     return () => {
+      if (rafIdRef.current) {
+        cancelAnimationFrame(rafIdRef.current);
+      }
       lenisInstance.destroy();
       lenisRef.current = null;
       subscribers.forEach((cb) => cb());
     };
-  }, []);
+  }, [shouldReduceMotion]);
 
   return (
     <LenisContext.Provider value={{ lenis }}>{children}</LenisContext.Provider>

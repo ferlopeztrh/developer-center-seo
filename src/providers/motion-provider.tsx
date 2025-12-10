@@ -4,21 +4,18 @@ import {
   createContext,
   useContext,
   useEffect,
-  useState,
   useCallback,
+  useRef,
+  useSyncExternalStore,
   type ReactNode,
 } from "react";
 
 type MotionPreference = "system" | "reduce" | "allow";
 
 interface MotionContextValue {
-  /** Preferencia actual del usuario */
   preference: MotionPreference;
-  /** Si las animaciones deben reducirse (resultado final) */
   shouldReduceMotion: boolean;
-  /** Preferencia del sistema operativo */
   systemPreference: boolean;
-  /** Cambiar preferencia */
   setPreference: (pref: MotionPreference) => void;
 }
 
@@ -26,52 +23,81 @@ const MotionContext = createContext<MotionContextValue | null>(null);
 
 const STORAGE_KEY = "motion-preference";
 
+function subscribeToStorage(callback: () => void) {
+  window.addEventListener("storage", callback);
+  return () => window.removeEventListener("storage", callback);
+}
+
+function getStoredPreference(): MotionPreference {
+  const stored = localStorage.getItem(STORAGE_KEY);
+  if (stored && ["system", "reduce", "allow"].includes(stored)) {
+    return stored as MotionPreference;
+  }
+  return "system";
+}
+
+function getServerSnapshot(): MotionPreference {
+  return "system";
+}
+
+function createMediaQueryStore() {
+  let mediaQuery: MediaQueryList | null = null;
+
+  return {
+    subscribe(callback: () => void) {
+      mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+      mediaQuery.addEventListener("change", callback);
+      return () => mediaQuery?.removeEventListener("change", callback);
+    },
+    getSnapshot() {
+      return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    },
+    getServerSnapshot() {
+      return false;
+    },
+  };
+}
+
+const mediaQueryStore = createMediaQueryStore();
+
 export function MotionProvider({ children }: { children: ReactNode }) {
-  const [preference, setPreferenceState] = useState<MotionPreference>("system");
-  const [systemPreference, setSystemPreference] = useState(false);
-  const [isHydrated, setIsHydrated] = useState(false);
+  const isReloadingRef = useRef(false);
 
-  // Detectar preferencia del sistema
-  useEffect(() => {
-    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setSystemPreference(mediaQuery.matches);
+  const preference = useSyncExternalStore(
+    subscribeToStorage,
+    getStoredPreference,
+    getServerSnapshot
+  );
 
-    const handleChange = (e: MediaQueryListEvent) => {
-      setSystemPreference(e.matches);
-    };
-
-    mediaQuery.addEventListener("change", handleChange);
-    return () => mediaQuery.removeEventListener("change", handleChange);
-  }, []);
-
-  // Cargar preferencia guardada
-  useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY) as MotionPreference | null;
-    if (stored && ["system", "reduce", "allow"].includes(stored)) {
-      setPreferenceState(stored);
-    }
-    setIsHydrated(true);
-  }, []);
+  const systemPreference = useSyncExternalStore(
+    mediaQueryStore.subscribe,
+    mediaQueryStore.getSnapshot,
+    mediaQueryStore.getServerSnapshot
+  );
 
   const setPreference = useCallback((pref: MotionPreference) => {
-    setPreferenceState(pref);
+    // Marcar que estamos por recargar para evitar errores de cleanup
+    isReloadingRef.current = true;
+
     localStorage.setItem(STORAGE_KEY, pref);
+    window.dispatchEvent(new Event("storage"));
+
+    // Reload más rápido, el delay era innecesario
+    setTimeout(() => {
+      window.location.reload();
+    }, 50);
   }, []);
 
-  // Calcular si debe reducir motion
   const shouldReduceMotion =
     preference === "reduce" || (preference === "system" && systemPreference);
 
-  // Sincronizar con atributo en el HTML para CSS
   useEffect(() => {
-    if (!isHydrated) return;
-
     if (shouldReduceMotion) {
       document.documentElement.setAttribute("data-reduce-motion", "true");
     } else {
       document.documentElement.removeAttribute("data-reduce-motion");
     }
-  }, [shouldReduceMotion, isHydrated]);
+  }, [shouldReduceMotion]);
 
   return (
     <MotionContext.Provider

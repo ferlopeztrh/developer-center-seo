@@ -6,7 +6,7 @@ import {
   TopGridMobileSVG,
   BottomGridSVG,
   BottomGridMobileSVG,
-} from "@/components/sections/hero/svg";
+} from "@/sections/hero/components/svg";
 
 import heroImage from "@/assets/images/individual-mobile.webp";
 import clickToPay from "@/assets/brands/click-to-pay.svg";
@@ -259,29 +259,32 @@ export function HeroImageSection({ isStatic = false }: HeroImageSectionProps) {
               </div>
 
               {/* Líneas conectoras decorativas (solo desktop y con animaciones) */}
+              {/* Líneas conectoras decorativas (solo desktop y con animaciones) */}
               {!isStatic && (
                 <svg
                   className="absolute inset-0 w-full h-full pointer-events-none hidden lg:block"
+                  viewBox="0 0 100 100"
+                  preserveAspectRatio="none"
                   style={{ overflow: "visible" }}
                   aria-hidden="true"
                   focusable="false"
                 >
                   <path
                     className="animated-path delay-card-2"
-                    d="M 20% 30% Q 5% 25%, -15% 20%"
+                    d="M 20 30 Q 5 25, -15 20"
                     stroke="#753bbd"
-                    strokeWidth="1"
+                    strokeWidth="0.5"
                     fill="none"
-                    strokeDasharray="4 4"
+                    strokeDasharray="2 2"
                     opacity="0"
                   />
                   <path
                     className="animated-path delay-card-3"
-                    d="M 80% 20% Q 95% 15%, 105% 10%"
+                    d="M 80 20 Q 95 15, 105 10"
                     stroke="#753bbd"
-                    strokeWidth="1"
+                    strokeWidth="0.5"
                     fill="none"
-                    strokeDasharray="4 4"
+                    strokeDasharray="2 2"
                     opacity="0"
                   />
                 </svg>
