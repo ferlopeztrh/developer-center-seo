@@ -4,11 +4,12 @@ import { useRef, useEffect } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useMotion } from "@/providers/motion-provider";
+import { useLocale } from "@/hooks/use-locale";
 import { ScrollVelocity } from "@/components/ui/scroll-velocity";
 import { OutroCard } from "./merchants-outro-card";
 
 const MERCHANT_IMAGES = Array.from(
-  { length: 20 },
+  { length: 12 },
   (_, i) => `https://picsum.photos/800/600?random=${i + 1}`
 );
 
@@ -25,14 +26,6 @@ const SCATTER_DIRECTIONS = [
   { x: -1.4, y: 0.9 },
   { x: 1.8, y: -0.5 },
   { x: -1.1, y: -1.8 },
-  { x: 0.9, y: 1.8 },
-  { x: -1.9, y: 0.4 },
-  { x: 1.0, y: -1.9 },
-  { x: -0.8, y: 1.9 },
-  { x: 1.7, y: -1.0 },
-  { x: -1.3, y: -1.2 },
-  { x: 0.7, y: 2.0 },
-  { x: 1.25, y: -0.2 },
 ];
 
 export const MerchantsDesktop = () => {
@@ -43,6 +36,9 @@ export const MerchantsDesktop = () => {
   const introHeaderRef = useRef<HTMLHeadingElement>(null);
   const outroRef = useRef<HTMLDivElement>(null);
   const { shouldReduceMotion } = useMotion();
+  const { t } = useLocale();
+
+  const merchantsTexts = t.sections.merchants;
 
   useEffect(() => {
     if (shouldReduceMotion || !sectionRef.current) return;
@@ -87,16 +83,16 @@ export const MerchantsDesktop = () => {
     const trigger = ScrollTrigger.create({
       trigger: sectionRef.current,
       start: "top top",
-      end: `+=${window.innerHeight * 8}px`,
+      end: `+=${window.innerHeight * 3.3}px`,
       pin: true,
       pinSpacing: true,
       scrub: 1,
       onUpdate: (self) => {
         const progress = self.progress;
 
-        // Fondo y pre-content (0% - 5%)
-        if (progress <= 0.05) {
-          const bgProgress = progress / 0.05;
+        // Fondo y pre-content (0% - 10%)
+        if (progress <= 0.1) {
+          const bgProgress = progress / 0.1;
           const bgValue = Math.round(255 * (1 - bgProgress));
           gsap.set(background, {
             backgroundColor: `rgb(${bgValue}, ${bgValue}, ${bgValue})`,
@@ -110,14 +106,14 @@ export const MerchantsDesktop = () => {
           gsap.set(preContent, { opacity: 0, scale: 0.9 });
         }
 
-        // Imágenes
+        // Imágenes (5% - 60%)
         images.forEach((img, index) => {
           const staggerDelay = index * 0.02;
           const scaleMultiplier = 2;
 
           const imageProgress = Math.max(
             0,
-            (progress - 0.03 - staggerDelay) * 4
+            (progress - 0.05 - staggerDelay) * 4
           );
 
           const start = startPositions[index];
@@ -140,15 +136,15 @@ export const MerchantsDesktop = () => {
           });
         });
 
-        // Intro text
+        // Intro text (10% - 70%)
         if (words.length > 0) {
-          if (progress >= 0.05 && progress <= 0.12) {
-            const fadeInProgress = (progress - 0.05) / 0.07;
+          if (progress >= 0.1 && progress <= 0.17) {
+            const fadeInProgress = (progress - 0.1) / 0.07;
             gsap.set(words, { opacity: fadeInProgress });
-          } else if (progress > 0.12 && progress < 0.55) {
+          } else if (progress > 0.17 && progress < 0.6) {
             gsap.set(words, { opacity: 1 });
-          } else if (progress >= 0.55 && progress <= 0.7) {
-            const introFadeProgress = (progress - 0.55) / 0.15;
+          } else if (progress >= 0.6 && progress <= 0.7) {
+            const introFadeProgress = (progress - 0.6) / 0.1;
             const totalWords = words.length;
 
             words.forEach((word, index) => {
@@ -165,22 +161,22 @@ export const MerchantsDesktop = () => {
                 gsap.set(word, { opacity: wordOpacity });
               }
             });
-          } else if (progress < 0.05) {
+          } else if (progress < 0.1) {
             gsap.set(words, { opacity: 0 });
           } else if (progress > 0.7) {
             gsap.set(words, { opacity: 0 });
           }
         }
 
-        // Outro CTA (65% - 80%)
-        if (progress >= 0.65 && progress <= 0.8) {
-          const outroProgress = (progress - 0.65) / 0.15;
+        // Outro CTA (70% - 100%)
+        if (progress >= 0.7 && progress <= 1) {
+          const outroProgress = (progress - 0.7) / 0.3;
           gsap.set(outro, {
             opacity: outroProgress,
             scale: 0.8 + 0.2 * outroProgress,
             y: 50 * (1 - outroProgress),
           });
-        } else if (progress < 0.65) {
+        } else if (progress < 0.7) {
           gsap.set(outro, { opacity: 0, scale: 0.8, y: 50 });
         } else {
           gsap.set(outro, { opacity: 1, scale: 1, y: 0 });
@@ -198,23 +194,28 @@ export const MerchantsDesktop = () => {
       window.removeEventListener("resize", handleResize);
       trigger.kill();
     };
-  }, [shouldReduceMotion]);
+  }, [shouldReduceMotion, merchantsTexts.intro.text]);
 
   if (shouldReduceMotion) {
     return (
-      <section className="relative w-full min-h-screen bg-black flex items-center justify-center p-8">
+      <section
+        className="relative w-full min-h-screen bg-black flex items-center justify-center p-8"
+        aria-label={merchantsTexts.a11y.sectionLabel}
+      >
         <OutroCard />
       </section>
     );
   }
 
-  const headerText = "Unite a miles de comercios y sé parte de la Red Dinelco";
+  const headerText = merchantsTexts.intro.text;
   const headerWords = headerText.split(" ");
+  const highlightWords = merchantsTexts.intro.highlightWords;
 
   return (
     <section
       ref={sectionRef}
       className="merchants-section relative w-dvw h-dvh overflow-hidden"
+      aria-label={merchantsTexts.a11y.sectionLabel}
     >
       <div
         ref={backgroundRef}
@@ -228,7 +229,7 @@ export const MerchantsDesktop = () => {
         className="absolute inset-0 flex flex-col items-center justify-center z-5 select-none pointer-events-none"
       >
         <ScrollVelocity
-          texts={["HACELO", "DIFERENTE"]}
+          texts={[merchantsTexts.marquee.word1, merchantsTexts.marquee.word2]}
           velocity={80}
           className="font-gilroy font-bold text-foreground/10"
           scrollerClassName="!text-[15vw] !leading-none !tracking-tighter"
@@ -248,7 +249,7 @@ export const MerchantsDesktop = () => {
           >
             <img
               src={src}
-              alt={`Comercio ${index + 1}`}
+              alt={`${merchantsTexts.a11y.merchantImage} ${index + 1}`}
               className="w-full h-full object-cover rounded-2xl shadow-2xl"
               loading="lazy"
             />
@@ -267,8 +268,7 @@ export const MerchantsDesktop = () => {
               key={index}
               className="word inline-block mr-[0.3em] opacity-0"
               style={{
-                color:
-                  word === "Red" || word === "Dinelco" ? "#8b5cf6" : undefined,
+                color: highlightWords.includes(word) ? "#8b5cf6" : undefined,
               }}
             >
               {word}
@@ -281,6 +281,7 @@ export const MerchantsDesktop = () => {
       <div
         ref={outroRef}
         className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none"
+        aria-label={merchantsTexts.a11y.outroSection}
       >
         <OutroCard />
       </div>

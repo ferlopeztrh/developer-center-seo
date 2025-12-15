@@ -60,6 +60,7 @@ export const CopyRevealText = ({
     new Map()
   );
   const completedChars = useRef<Set<number>>(new Set());
+  const isInitialized = useRef<boolean>(false);
 
   useGSAP(
     () => {
@@ -71,6 +72,7 @@ export const CopyRevealText = ({
       lastScrollProgress.current = 0;
       colorTimers.current.clear();
       completedChars.current.clear();
+      isInitialized.current = false;
 
       const elements: HTMLElement[] = container.hasAttribute(
         "data-copy-wrapper"
@@ -81,22 +83,31 @@ export const CopyRevealText = ({
         : [container];
 
       elements.forEach((el) => {
-        const wordSplitRaw = SplitTextPlugin.create(el, {
-          type: "words",
-          wordsClass: "word",
-        });
-        const wordSplit = toSplitText(wordSplitRaw);
+        try {
+          const wordSplitRaw = SplitTextPlugin.create(el, {
+            type: "words",
+            wordsClass: "word",
+          });
+          const wordSplit = toSplitText(wordSplitRaw);
 
-        const charSplitRaw = SplitTextPlugin.create(wordSplit.words, {
-          type: "chars",
-          charsClass: "char",
-        });
-        const charSplit = toSplitText(charSplitRaw);
+          const charSplitRaw = SplitTextPlugin.create(wordSplit.words, {
+            type: "chars",
+            charsClass: "char",
+          });
+          const charSplit = toSplitText(charSplitRaw);
 
-        splitRefs.current.push({ wordSplit, charSplit });
+          splitRefs.current.push({ wordSplit, charSplit });
+        } catch (error) {
+          console.warn("Error creating SplitText:", error);
+        }
       });
 
       const allChars = splitRefs.current.flatMap((s) => s.charSplit.chars);
+
+      if (allChars.length === 0) {
+        isInitialized.current = false;
+        return;
+      }
 
       // Guardamos color final real de cada char
       const charFinalColors = new Map<HTMLElement, string>();
@@ -117,7 +128,7 @@ export const CopyRevealText = ({
             gsap.to(char, {
               duration: 0.25,
               ease: "none",
-              color: charFinalColors.get(char) ?? colorFinal, // <-- respeta color original si existe
+              color: charFinalColors.get(char) ?? colorFinal,
               onComplete: () => {
                 completedChars.current.add(index);
               },
@@ -164,14 +175,37 @@ export const CopyRevealText = ({
         },
       });
 
+      isInitialized.current = true;
+
       return () => {
+        // Clear timers
         colorTimers.current.forEach((t) => clearTimeout(t));
         colorTimers.current.clear();
         completedChars.current.clear();
-        splitRefs.current.forEach(({ wordSplit, charSplit }) => {
-          charSplit.revert();
-          wordSplit.revert();
-        });
+
+        // Safe cleanup of SplitText instances
+        if (isInitialized.current) {
+          splitRefs.current.forEach(({ wordSplit, charSplit }) => {
+            try {
+              if (charSplit && typeof charSplit.revert === "function") {
+                charSplit.revert();
+              }
+            } catch {
+              // Ignore revert errors on unmount
+            }
+
+            try {
+              if (wordSplit && typeof wordSplit.revert === "function") {
+                wordSplit.revert();
+              }
+            } catch {
+              // Ignore revert errors on unmount
+            }
+          });
+        }
+
+        splitRefs.current = [];
+        isInitialized.current = false;
       };
     },
     {

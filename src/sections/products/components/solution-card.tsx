@@ -3,9 +3,10 @@
 import Image from "next/image";
 import { useState } from "react";
 import { Link } from "next-view-transitions";
-import { AnimationType } from "@/hooks/use-animate-on-view";
-import type { Solution } from "@/sections/products/interfaces";
 import { ArrowRight } from "lucide-react";
+import { AnimationType } from "@/hooks/use-animate-on-view";
+import { useLocale } from "@/hooks/use-locale";
+import type { Solution } from "@/sections/products/interfaces";
 
 export const SolutionCard = ({
   solution,
@@ -15,6 +16,8 @@ export const SolutionCard = ({
   index: number;
 }) => {
   const [isHovered, setIsHovered] = useState(false);
+  const { t } = useLocale();
+  const viewMore = t.sections.products.a11y.viewMore || "Ver más";
 
   return (
     <Link
@@ -58,7 +61,7 @@ export const SolutionCard = ({
               </h3>
 
               <span className="flex items-center gap-1 text-white/90 group-hover:text-white text-sm sm:text-base transition-colors">
-                Ver más <ArrowRight size={16} />
+                {viewMore} <ArrowRight size={16} />
               </span>
             </div>
 

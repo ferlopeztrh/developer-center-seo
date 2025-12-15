@@ -2,24 +2,26 @@
 
 import Image from "next/image";
 import Link from "next/link";
-
 import { useRef, useState, useEffect } from "react";
 import { gsap } from "gsap";
 
 import { useAnimateOnView, useIsDesktop, AnimationType } from "@/hooks";
-
+import { useLocale } from "@/hooks/use-locale";
 import { CopyRevealText } from "@/components/ui";
 import { ArrowIcon, ChevronIcon } from "@/components/icons";
 import { SolutionCard } from "@/sections/products/components/solution-card";
-
-import { SOLUTIONS } from "@/sections/products/constants";
-import { PortalCard } from "./portal-card";
+import { PortalCard } from "@/sections/products/components/portal-card";
+import { getSolutions } from "@/sections/products/constants";
 
 export function ProductsSection() {
   useAnimateOnView();
   const isDesktop = useIsDesktop();
+  const { t } = useLocale();
   const [currentIndex, setCurrentIndex] = useState(0);
   const trackRef = useRef<HTMLDivElement>(null);
+
+  const SOLUTIONS = getSolutions(t);
+  const productsTexts = t.sections.products;
 
   useEffect(() => {
     if (!trackRef.current || isDesktop) return;
@@ -49,19 +51,27 @@ export function ProductsSection() {
   const currentSolution = SOLUTIONS[currentIndex];
 
   return (
-    <section className="relative py-8 lg:py-12 bg-white overflow-hidden">
+    <section
+      className="relative py-8 lg:py-12 bg-white overflow-hidden"
+      aria-labelledby="products-heading"
+    >
       {/* Header */}
       <div className="relative w-full px-5 lg:px-12 xl:px-16">
         <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-4 lg:gap-8 mb-6 lg:mb-8">
           <div className="flex flex-col items-start text-left">
             <span className="inline-block font-gilroy font-normal text-xs lg:text-sm tracking-widest text-secondary uppercase mb-2 lg:mb-3">
-              Nuestras soluciones
+              {productsTexts.header.tag}
             </span>
 
             <CopyRevealText>
-              <h2 className="font-gilroy font-medium text-2xl sm:text-3xl lg:text-4xl xl:text-5xl">
-                <span className="block">Un proceso de pago</span>
-                <span className="block text-primary">sin complicaciones</span>
+              <h2
+                id="products-heading"
+                className="font-gilroy font-medium text-2xl sm:text-3xl lg:text-4xl xl:text-5xl"
+              >
+                <span className="block">{productsTexts.header.titleLine1}</span>
+                <span className="block text-primary">
+                  {productsTexts.header.titleLine2}
+                </span>
               </h2>
             </CopyRevealText>
           </div>
@@ -72,8 +82,7 @@ export function ProductsSection() {
               data-animate={AnimationType.SlideUp}
               data-delay="0.4"
             >
-              Todo lo que tu negocio necesita para aceptar pagos, automatizar
-              procesos y crecer sin complicaciones.
+              {productsTexts.header.description}
             </p>
           </div>
         </div>
@@ -142,7 +151,7 @@ export function ProductsSection() {
                   onClick={goToPrev}
                   disabled={currentIndex === 0}
                   className="w-10 h-10 rounded-full border border-neutral-300 flex items-center justify-center text-neutral-700 hover:border-neutral-400 hover:bg-neutral-50 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
-                  aria-label="Anterior"
+                  aria-label={productsTexts.a11y.prevButton}
                 >
                   <ArrowIcon direction="left" />
                 </button>
@@ -150,7 +159,7 @@ export function ProductsSection() {
                   onClick={goToNext}
                   disabled={currentIndex === SOLUTIONS.length - 1}
                   className="w-10 h-10 rounded-full border border-neutral-300 flex items-center justify-center text-neutral-700 hover:border-neutral-400 hover:bg-neutral-50 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
-                  aria-label="Siguiente"
+                  aria-label={productsTexts.a11y.nextButton}
                 >
                   <ArrowIcon direction="right" />
                 </button>

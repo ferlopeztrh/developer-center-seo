@@ -4,9 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build && node scripts/generate-base-path.mjs",
+    "build": "next build && node scripts/export.mjs",
     "start": "next start",
-    "start:build": "npx serve@latest -s out/developer-center",
+    "start:build": "node scripts/server.mjs",
     "lint": "eslint"
   },
   "dependencies": {

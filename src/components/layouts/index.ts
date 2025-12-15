@@ -1,7 +1,1 @@
-export {
-  Header,
-  HamburgerButton,
-  MenuOverlay,
-  MenuVisual,
-  type MenuOverlayRef,
-} from "./header";
+export { Header, HamburgerButton } from "./header";

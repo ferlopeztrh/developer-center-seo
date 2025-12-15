@@ -1,39 +1,41 @@
 import type { Solution } from "../interfaces";
+import type { Dictionary } from "@/locales/es";
 
 import dLinkStatic from "@/assets/d-link.jpg";
 import checkoutStatic from "@/assets/products/checkout.png";
 import dLinkGif from "@/assets/products/dinelco-link.gif";
 import checkoutGif from "@/assets/checkout.gif";
 
-export const SOLUTIONS: Solution[] = [
-  {
-    id: "checkout",
-    title: "Dinelco Checkout",
-    description:
-      "Integra pagos en tu sitio web o app con nuestra solución de checkout personalizable y segura.",
-    cta: "Ver solución",
-    ctaHref: "/soluciones/checkout",
-    imageStatic: checkoutStatic,
-    imageGif: checkoutGif,
-  },
-  {
-    id: "payment-links",
-    title: "Dinelco Link",
-    description:
-      "Genera enlaces de pago únicos para compartir por WhatsApp, email o redes sociales.",
-    cta: "Ver solución",
-    ctaHref: "/soluciones/payment-links",
-    imageStatic: dLinkStatic,
-    imageGif: dLinkGif,
-  },
-  {
-    id: "subscriptions",
-    title: "Pagos recurrentes",
-    description:
-      "Automatiza cobros recurrentes y gestiona suscripciones de forma simple y eficiente.",
-    cta: "Ver solución",
-    ctaHref: "/soluciones/subscriptions",
-    imageStatic: checkoutStatic,
-    imageGif: checkoutGif,
-  },
-];
+export const getSolutions = (t: Dictionary): Solution[] => {
+  const { solutions } = t.sections.products;
+
+  return [
+    {
+      id: "checkout",
+      title: solutions.checkout.title,
+      description: solutions.checkout.description,
+      cta: solutions.checkout.cta,
+      ctaHref: "/soluciones/checkout",
+      imageStatic: checkoutStatic,
+      imageGif: checkoutGif,
+    },
+    {
+      id: "payment-links",
+      title: solutions["payment-links"].title,
+      description: solutions["payment-links"].description,
+      cta: solutions["payment-links"].cta,
+      ctaHref: "/soluciones/payment-links",
+      imageStatic: dLinkStatic,
+      imageGif: dLinkGif,
+    },
+    {
+      id: "subscriptions",
+      title: solutions.subscriptions.title,
+      description: solutions.subscriptions.description,
+      cta: solutions.subscriptions.cta,
+      ctaHref: "/soluciones/subscriptions",
+      imageStatic: checkoutStatic,
+      imageGif: checkoutGif,
+    },
+  ];
+};

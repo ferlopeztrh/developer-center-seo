@@ -1,4 +1,5 @@
 export { HeroSection } from "./hero";
 export { ProductsSection } from "./products";
-export { BrandsSection } from "./partners-brands";
+export { PartnersSection } from "./partners";
 export { MerchantsSection } from "./merchants";
+export { NewsletterSection } from "./newsletter";

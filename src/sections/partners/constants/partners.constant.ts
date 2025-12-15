@@ -10,7 +10,7 @@ import panal from "@/assets/brands/panal.jpg";
 import pix from "@/assets/brands/pix.svg";
 import visa from "@/assets/brands/visa.svg";
 
-export interface Brand {
+export interface Partner {
   id: string;
   name: string;
   logo: StaticImageData;
@@ -18,7 +18,7 @@ export interface Brand {
   maxHeightMobile: number;
 }
 
-export const BRANDS: Brand[] = [
+export const PARTNERS: Partner[] = [
   {
     id: "visa",
     name: "Visa",

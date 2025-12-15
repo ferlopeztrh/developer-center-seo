@@ -1,35 +1,36 @@
-import type { Metadata } from "next";
+import { ViewTransitions } from "next-view-transitions";
 import { gilroy } from "@/fonts/gilroy";
 import { notoSans } from "@/fonts/noto-sans";
 import { MotionProvider, SmoothScrollProvider } from "@/providers";
 import { LocaleProvider } from "@/hooks/use-locale";
 import { Header } from "@/components/layouts/header";
 import { MotionInitScript } from "@/components/scripts";
+import "@/app/styles/globals.css";
 
-export const metadata: Metadata = {
+export const metadata = {
   title: {
     default: "Developer Center | Dinelco",
     template: "%s | Developer Center",
   },
-  description: "Centro de desarrolladores de Dinelco",
+  description: "Dinelco Developer Center",
 };
 
-export default function EsLayout({ children }: { children: React.ReactNode }) {
+export default function LayoutEs({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="es-PY" suppressHydrationWarning>
-      <head>
-        <MotionInitScript />
-      </head>
-      <body className={`${gilroy.variable} ${notoSans.variable} antialiased`}>
-        <MotionProvider>
-          <SmoothScrollProvider>
-            <LocaleProvider locale="es">
-              <Header />
-              {children}
-            </LocaleProvider>
-          </SmoothScrollProvider>
-        </MotionProvider>
-      </body>
-    </html>
+    <ViewTransitions>
+      <html lang="es-PY" suppressHydrationWarning>
+        <body className={`${gilroy.variable} ${notoSans.variable} antialiased`}>
+          <MotionInitScript />
+          <MotionProvider>
+            <SmoothScrollProvider>
+              <LocaleProvider locale="es">
+                <Header />
+                {children}
+              </LocaleProvider>
+            </SmoothScrollProvider>
+          </MotionProvider>
+        </body>
+      </html>
+    </ViewTransitions>
   );
 }

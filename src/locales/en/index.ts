@@ -1,17 +1,36 @@
 import { common, type CommonDictionary } from "./common";
 import { menu, type MenuDictionary } from "./menu";
-import { hero, type HeroDictionary } from "./sections/hero";
+import {
+  hero,
+  merchants,
+  newsletter,
+  partners,
+  products,
+  type HeroDictionary,
+  type MerchantsDictionary,
+  type NewsletterDictionary,
+  type PartnersDictionary,
+  type ProductsDictionary,
+} from "./sections";
 
 export const en = {
   common,
   menu,
   sections: {
     hero,
+    products,
+    partners,
+    merchants,
+    newsletter,
   },
 };
 
 export type SectionsDictionary = {
   hero: HeroDictionary;
+  products: ProductsDictionary;
+  partners: PartnersDictionary;
+  merchants: MerchantsDictionary;
+  newsletter: NewsletterDictionary;
 };
 
 export type Dictionary = {

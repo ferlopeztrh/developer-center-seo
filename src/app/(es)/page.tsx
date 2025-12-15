@@ -1,8 +1,9 @@
 import {
   HeroSection,
   ProductsSection,
-  BrandsSection,
+  PartnersSection,
   MerchantsSection,
+  NewsletterSection,
 } from "@/sections";
 
 export default function Home() {
@@ -10,8 +11,9 @@ export default function Home() {
     <>
       <HeroSection />
       <ProductsSection />
-      <BrandsSection />
+      <PartnersSection />
       <MerchantsSection />
+      <NewsletterSection />
     </>
   );
 }

@@ -1,1 +1,1 @@
-export { SOLUTIONS } from "./solutions.constant";
+export { getSolutions } from "./solutions.constant";

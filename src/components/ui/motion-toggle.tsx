@@ -13,37 +13,35 @@ export function MotionToggle() {
   };
 
   return (
-    <div className="md:flex hidden items-center gap-3">
-      <span className="font-notosans text-sm text-neutral-400">
+    <button
+      type="button"
+      role="switch"
+      aria-checked={shouldReduceMotion}
+      aria-label={a11yTexts.motionLabel}
+      onClick={handleToggle}
+      className="group relative md:flex hidden items-center gap-2.5 px-3 py-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/15 hover:border-white/30 transition-all duration-200"
+    >
+      {/* Icon/Indicator */}
+      <div className="relative flex items-center">
+        <div
+          className={`w-5 h-5 rounded-full border-2 transition-all duration-300 ${
+            shouldReduceMotion
+              ? "border-white/40 bg-white/10"
+              : "border-white/60 bg-transparent"
+          }`}
+        >
+          {shouldReduceMotion && (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-2 h-2 rounded-full bg-white" />
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Label */}
+      <span className="font-gilroy text-xs font-medium text-white/90 whitespace-nowrap tracking-wide">
         {a11yTexts.motionLabel}
       </span>
-
-      <button
-        type="button"
-        role="switch"
-        aria-checked={shouldReduceMotion}
-        aria-label={a11yTexts.motionLabel}
-        onClick={handleToggle}
-        disabled={false}
-        className={`
-          relative inline-flex h-6 w-11 items-center rounded-full 
-          focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-black
-          ${shouldReduceMotion ? "bg-primary" : "bg-neutral-700"}
-          ${shouldReduceMotion ? "" : "transition-colors duration-200"}
-        `}
-      >
-        <span
-          className={`
-            inline-block h-4 w-4 rounded-full bg-white
-            ${shouldReduceMotion ? "translate-x-6" : "translate-x-1"}
-            ${
-              shouldReduceMotion
-                ? ""
-                : "transform transition-transform duration-200"
-            }
-          `}
-        />
-      </button>
-    </div>
+    </button>
   );
 }
